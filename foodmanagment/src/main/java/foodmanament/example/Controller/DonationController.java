@@ -1,29 +1,66 @@
 package foodmanament.example.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import foodmanament.example.Entity.Donation;
+import foodmanament.example.Entity.Donor;
 import foodmanament.example.Repository.DonationRepository;
+import foodmanament.example.Repository.DonorRepository;
+import foodmanament.example.Service.DonorService;
 
-@RestController
+@Controller
 @RequestMapping("/donation")
+@PreAuthorize("hasRole('ADMIN') or hasRole('DONOR')")
 public class DonationController {
 
     @Autowired
     private DonationRepository donationRepository;
 
+    @Autowired
+    private DonorRepository donorRepository;
+
+    @Autowired
+    private DonorService donorService;
+
     // Create a new donation
     @PostMapping("/add")
-    public Donation addDonation(@RequestBody Donation donation) {
-        return donationRepository.save(donation);
+    public String addDonation(@ModelAttribute Donation donation, Authentication authentication) {
+        String username = authentication.getName();
+        Donor donor = donorService.findByUsername(username).orElseThrow();
+        donation.setDonor(donor);
+        donationRepository.save(donation);
+        return "redirect:/donation/all";
+    }
+
+    // ➕ Show add donation form
+    @GetMapping("/add-form")
+    public String showAddDonationForm(Model model) {
+        model.addAttribute("donation", new Donation());
+        model.addAttribute("donors", donorRepository.findAll());
+        return "add-donation";
     }
 
     // Get all donations
     @GetMapping("/all")
-    public List<Donation> getAllDonations() {
-        return donationRepository.findAll();
+    public String getAllDonations(Model model, Authentication authentication) {
+        List<Donation> donations;
+        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            donations = donationRepository.findAll();
+        } else {
+            String username = authentication.getName();
+            Donor donor = donorService.findByUsername(username).orElseThrow();
+            donations = donationRepository.findAll().stream()
+                    .filter(d -> d.getDonor().getId().equals(donor.getId()))
+                    .toList();
+        }
+        model.addAttribute("donations", donations);
+        return "donations";
     }
 
     // Get donation by ID

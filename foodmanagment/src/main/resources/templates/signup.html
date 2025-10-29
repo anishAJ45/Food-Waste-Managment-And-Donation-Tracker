@@ -28,7 +28,7 @@
             <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
             <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
 
-            <form th:action="@{/auth/signup}" method="post" th:object="${user}" id="signupForm">
+            <form th:action="@{/auth/signup}" method="post" th:object="${donor}" id="signupForm">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" th:field="*{username}" required>

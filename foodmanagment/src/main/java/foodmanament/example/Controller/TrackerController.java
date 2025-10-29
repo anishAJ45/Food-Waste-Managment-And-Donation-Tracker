@@ -1,28 +1,46 @@
 package foodmanament.example.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import foodmanament.example.Entity.Tracker;
+import foodmanament.example.Entity.Donation;
 import foodmanament.example.Repository.TrackerRepository;
+import foodmanament.example.Repository.DonationRepository;
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/tracker")
 public class TrackerController {
 
     @Autowired
     private TrackerRepository trackerRepository;
 
+    @Autowired
+    private DonationRepository donationRepository;
+
     // ➕ Add a new tracker entry
     @PostMapping("/add")
-    public Tracker addTracker(@RequestBody Tracker tracker) {
-        return trackerRepository.save(tracker);
+    public String addTracker(@ModelAttribute Tracker tracker) {
+        trackerRepository.save(tracker);
+        return "redirect:/tracker/all";
+    }
+
+    // ➕ Show add tracker form
+    @GetMapping("/add-form")
+    public String showAddTrackerForm(Model model) {
+        model.addAttribute("tracker", new Tracker());
+        model.addAttribute("donations", donationRepository.findAll());
+        return "add-tracker";
     }
 
     // 🔍 Get all tracker details
     @GetMapping("/all")
-    public List<Tracker> getAllTrackers() {
-        return trackerRepository.findAll();
+    public String getAllTrackers(Model model) {
+        List<Tracker> trackers = trackerRepository.findAll();
+        model.addAttribute("trackers", trackers);
+        return "trackers";
     }
 
     // 🔍 Get tracker by ID

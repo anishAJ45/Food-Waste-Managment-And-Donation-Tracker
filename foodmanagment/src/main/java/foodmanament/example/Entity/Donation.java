@@ -31,7 +31,7 @@ public class Donation {
     // Many donations can be made by one user
     @ManyToOne
     @JoinColumn(name = "user_id")  // Foreign key column in donations table
-    private User user;
+    private Donor donor;
 
     // One donation has one tracker
     @OneToOne(mappedBy = "donation", cascade = CascadeType.ALL)

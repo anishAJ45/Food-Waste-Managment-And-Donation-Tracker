@@ -1,17 +1,19 @@
 package foodmanament.example.Repository;
 
-import foodmanament.example.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import foodmanament.example.Entity.Donor;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface DonorRepository extends JpaRepository<Donor, Long> {
 
-    Optional<User> findByUsername(String username);
+    // This helps during login/authentication
 
-    Optional<User> findByEmail(String email);
+    Optional<Donor> findByUsername(String username);
+
+    Optional<Donor> findByEmail(String email);
 
     boolean existsByUsername(String username);
 
