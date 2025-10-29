@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+            margin-bottom: 2rem;
+        }
+        .feature-card {
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-utensils"></i> Food Management
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="/donors/all">Donors</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="/donation/all">Donations</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="/tracker/all">Trackers</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" href="/auth/login">Login</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" href="/auth/signup">Sign Up</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="isAuthenticated()">
+                        <form th:action="@{/auth/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-link nav-link">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">Welcome to Food Management System</h1>
+            <p class="lead mb-4">Efficiently manage food donations and track their distribution</p>
+            <div sec:authorize="!isAuthenticated()">
+                <a href="/auth/signup" class="btn btn-light btn-lg me-3">Get Started</a>
+                <a href="/auth/login" class="btn btn-outline-light btn-lg">Login</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <div class="container" id="features">
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card feature-card h-100 border-0 shadow">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Donor Management</h5>
+                        <p class="card-text">Manage donor information and track their contributions to the community.</p>
+                        <a sec:authorize="isAuthenticated()" href="/donors/all" class="btn btn-primary">View Donors</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100 border-0 shadow">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-box fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Donation Tracking</h5>
+                        <p class="card-text">Track all food donations from receipt to distribution.</p>
+                        <a sec:authorize="isAuthenticated()" href="/donation/all" class="btn btn-success">View Donations</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card feature-card h-100 border-0 shadow">
+                    <div class="card-body text-center p-4">
+                        <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                        <h5 class="card-title">Status Monitoring</h5>
+                        <p class="card-text">Monitor the status and progress of food distribution activities.</p>
+                        <a sec:authorize="isAuthenticated()" href="/tracker/all" class="btn btn-info">View Trackers</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions (only for authenticated users) -->
+        <div sec:authorize="isAuthenticated()" class="row g-3">
+            <div class="col-12">
+                <h3 class="mb-3">Quick Actions</h3>
+            </div>
+            <div class="col-md-3">
+                <a href="/donors/add-form" class="btn btn-outline-primary w-100">
+                    <i class="fas fa-plus-circle"></i> Add Donor
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="/donation/add-form" class="btn btn-outline-success w-100">
+                    <i class="fas fa-plus-circle"></i> Add Donation
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="/tracker/add-form" class="btn btn-outline-info w-100">
+                    <i class="fas fa-plus-circle"></i> Add Tracker
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="/donors/all" class="btn btn-outline-secondary w-100">
+                    <i class="fas fa-list"></i> View All
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light mt-5 py-4">
+        <div class="container text-center">
+            <p>&copy; 2024 Food Management System. Built with Spring Boot & Bootstrap.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add loading animation for buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function() {
+                if (this.href && !this.classList.contains('nav-link')) {
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
