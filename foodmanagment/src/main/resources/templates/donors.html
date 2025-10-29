@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Donors - Food Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-utensils"></i> Food Management
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/donation/all">Donations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/tracker/all">Trackers</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/donors/add-form">
+                            <i class="fas fa-plus"></i> Add Donor
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <form th:action="@{/auth/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-link nav-link">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h2 mb-0"><i class="fas fa-users text-primary"></i> All Donors</h1>
+                        <p class="text-muted">Manage and view all registered donors</p>
+                    </div>
+                    <a href="/donors/add-form" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Add New Donor
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title mb-0" th:text="${#lists.size(donors)}">0</h5>
+                                <p class="mb-0">Total Donors</p>
+                            </div>
+                            <i class="fas fa-users fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="card-title mb-0" th:text="${#lists.size(donors)}">0</h5>
+                                <p class="mb-0">Active Donors</p>
+                            </div>
+                            <i class="fas fa-user-check fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Donors Table -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="donorsTable" class="table table-striped table-hover mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th><i class="fas fa-hashtag"></i> ID</th>
+                                        <th><i class="fas fa-user"></i> Name</th>
+                                        <th><i class="fas fa-envelope"></i> Email</th>
+                                        <th><i class="fas fa-phone"></i> Contact No</th>
+                                        <th><i class="fas fa-calendar"></i> Join Date</th>
+                                        <th><i class="fas fa-cogs"></i> Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="donor : ${donors}" class="align-middle">
+                                        <td th:text="${donor.id}"></td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-circle bg-primary text-white me-2" style="width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                                    <span th:text="${#strings.substring(donor.name, 0, 1)}"></span>
+                                                </div>
+                                                <span th:text="${donor.name}"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a th:href="'mailto:' + ${donor.email}" class="text-decoration-none">
+                                                <i class="fas fa-envelope text-muted me-1"></i>
+                                                <span th:text="${donor.email}"></span>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <i class="fas fa-phone text-muted me-1"></i>
+                                            <span th:text="${donor.contactNo}"></span>
+                                        </td>
+                                        <td>
+                                            <i class="fas fa-calendar text-muted me-1"></i>
+                                            <span th:text="${#temporals.format(donor.joinDate, 'MMM dd, yyyy')}"></span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="viewDonorDetails(this)" data-donor-id="${donor.id}">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning" onclick="editDonor(this)" data-donor-id="${donor.id}">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteDonor(this)" data-donor-id="${donor.id}">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Donor Details -->
+    <div class="modal fade" id="donorDetailsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Donor Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="donorDetailsContent">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            $('#donorsTable').DataTable({
+                "pageLength": 10,
+                "responsive": true,
+                "language": {
+                    "search": "Search donors:",
+                    "lengthMenu": "Show _MENU_ donors per page",
+                    "info": "Showing _START_ to _END_ of _TOTAL_ donors"
+                }
+            });
+        });
+
+        function viewDonorDetails(button) {
+            const donorId = button.getAttribute('data-donor-id');
+            // In a real application, you would fetch donor details via AJAX
+            // For now, we'll show a placeholder
+            document.getElementById('donorDetailsContent').innerHTML = `
+                <p><strong>Donor ID:</strong> ${donorId}</p>
+                <p>This feature would load detailed donor information including donation history.</p>
+            `;
+            new bootstrap.Modal(document.getElementById('donorDetailsModal')).show();
+        }
+
+        function editDonor(button) {
+            const donorId = button.getAttribute('data-donor-id');
+            // Redirect to edit form (you would need to implement this endpoint)
+            window.location.href = `/donors/edit/${donorId}`;
+        }
+
+        function deleteDonor(button) {
+            const donorId = button.getAttribute('data-donor-id');
+            if (confirm('Are you sure you want to delete this donor?')) {
+                // Implement delete functionality
+                fetch(`/donors/${donorId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Error deleting donor');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting donor');
+                });
+            }
+        }
+
+        // Add loading animation for action buttons
+        document.querySelectorAll('.btn-group .btn').forEach(button => {
+            button.addEventListener('click', function() {
+                if (this.onclick) {
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
