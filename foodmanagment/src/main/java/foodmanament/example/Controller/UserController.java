@@ -1,41 +1,45 @@
 package foodmanament.example.Controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-
 import foodmanament.example.Entity.User;
-import foodmanament.example.Repository.UserRepository;
+import foodmanament.example.Service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@RestController
-@RequestMapping("/users")
+@Controller
+@RequestMapping("/auth")
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
-    // ➕ Add new user
-    @PostMapping("/add")
-    public User addUser(@RequestBody User user) {
-        return userRepository.save(user);
+    @GetMapping("/login")
+    public String showLoginForm() {
+        return "login";
     }
 
-    // 🔍 Get all users
-    @GetMapping("/all")
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    @GetMapping("/signup")
+    public String showSignupForm(Model model) {
+        model.addAttribute("user", new User());
+        return "signup";
     }
 
-    // 🔍 Get user by ID
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userRepository.findById(id).orElse(null);
+    @PostMapping("/signup")
+    public String registerUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
+        try {
+            userService.registerUser(user);
+            redirectAttributes.addFlashAttribute("successMessage", "Registration successful! Please login.");
+            return "redirect:/auth/login";
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/auth/signup";
+        }
     }
 
-    // ❌ Delete user
-    @DeleteMapping("/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        userRepository.deleteById(id);
-        return "User deleted successfully!";
+    @GetMapping("/logout")
+    public String logout() {
+        return "redirect:/auth/login?logout";
     }
 }
