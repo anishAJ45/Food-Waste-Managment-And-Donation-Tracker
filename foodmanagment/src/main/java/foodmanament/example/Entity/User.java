@@ -1,51 +1,42 @@
 package foodmanament.example.Entity;
 
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.boot.autoconfigure.security.saml2.Saml2RelyingPartyProperties.Decryption;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-
+import jakarta.persistence.*;
 import lombok.Data;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
-@Table(name = "donations")
+@Table(name = "auth_users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // Primary Key
+    private Long id;
 
-    private String name;
-    private String email;
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
     private String password;
-    private String contactNo;
-    private LocalDateTime joinDate = LocalDateTime.now();
 
-    // Relationship: One user can make many donations
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Decryption> donations;
+    @Column(nullable = false)
+    private String email;
+
+    private String role = "USER"; // Default role
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private boolean enabled = true;
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", contactNo='" + contactNo + '\'' +
-                ", joinDate=" + joinDate +
+                ", role='" + role + '\'' +
+                ", createdAt=" + createdAt +
+                ", enabled=" + enabled +
                 '}';
     }
 }
